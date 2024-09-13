@@ -1,4 +1,6 @@
 import configparser
+import tempfile
+from contextlib import suppress
 
 from sqlalchemy.dialects import registry
 
@@ -13,6 +15,9 @@ registry.register(
 )
 registry.register(
     "clickhouse.asynch", "clickhouse_sqlalchemy.drivers.asynch.base", "dialect"
+)
+registry.register(
+    "clickhouse.chdb", "clickhouse_sqlalchemy.drivers.chdb.base", "dialect"
 )
 
 file_config = configparser.ConfigParser()
@@ -38,6 +43,23 @@ native_uri = uri_template.format(
 asynch_uri = uri_template.format(
     schema='clickhouse+asynch', user=user, password=password, host=host,
     port=port, database=database)
+
+# *_uri should be refactored as fixtures to allow chdb_uri use tmp_path fixture
+# This is quick and dirty solution to minimize the diff.
+import atexit
+
+def rm_chdb_tmp_dir():
+    import shutil
+    with suppress(Exception):
+        shutil.rmtree(chdb_tmp_dir)
+
+atexit.register(rm_chdb_tmp_dir)
+chdb_tmp_dir = tempfile.mkdtemp("chdb-test")
+
+chdb_uri_template = '{schema}:///{database}?path={path}'
+chdb_uri = chdb_uri_template.format(
+    schema='clickhouse+chdb', database=database, path=chdb_tmp_dir)
+
 
 system_http_uri = uri_template.format(
     schema='clickhouse+http', user=user, password=password, host=host,

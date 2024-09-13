@@ -3,7 +3,7 @@ from sqlalchemy.sql.ddl import CreateTable
 
 from clickhouse_sqlalchemy import types, engines, Table
 from tests.testcase import BaseTestCase, CompilationTestCase
-from tests.util import with_native_and_http_sessions
+from tests.util import with_native_http_and_chdb_sessions
 
 
 class Int256CompilationTestCase(CompilationTestCase):
@@ -23,7 +23,7 @@ class Int256CompilationTestCase(CompilationTestCase):
         )
 
 
-@with_native_and_http_sessions
+@with_native_http_and_chdb_sessions
 class Int256TestCase(BaseTestCase):
     required_server_version = (21, 6, 0)
 

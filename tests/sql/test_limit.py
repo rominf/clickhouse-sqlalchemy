@@ -2,10 +2,10 @@ from sqlalchemy import Column, exc
 
 from clickhouse_sqlalchemy import types, Table
 from tests.testcase import BaseTestCase
-from tests.util import with_native_and_http_sessions
+from tests.util import with_native_http_and_chdb_sessions
 
 
-@with_native_and_http_sessions
+@with_native_http_and_chdb_sessions
 class LimitTestCase(BaseTestCase):
     table = Table(
         't1', BaseTestCase.metadata(),

@@ -5,10 +5,10 @@ from sqlalchemy import Column, text, create_engine, inspect
 
 from clickhouse_sqlalchemy import types, engines, Table, make_session
 from tests.testcase import BaseTestCase
-from tests.util import with_native_and_http_sessions
+from tests.util import with_native_http_and_chdb_sessions
 
 
-@with_native_and_http_sessions
+@with_native_http_and_chdb_sessions
 class EngineReflectionTestCase(BaseTestCase):
     required_server_version = (18, 16, 0)
 

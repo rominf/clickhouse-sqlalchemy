@@ -33,6 +33,7 @@ dialects = [
         ('.http', 'http.base:ClickHouseDialect_http'),
         ('.native', 'native.base:ClickHouseDialect_native'),
         ('.asynch', 'asynch.base:ClickHouseDialect_asynch'),
+        ('.chdb', 'chdb.base:ClickHouseDialect_chdb'),
     ]
 ]
 
@@ -101,6 +102,11 @@ setup(
         'clickhouse-driver>=0.1.2',
         'asynch>=0.2.2',
     ],
+    extras_require={
+        'chdb': [
+            'chdb>=2.0.0',
+        ],
+    },
     # Registering `clickhouse` as dialect.
     entry_points={
         'sqlalchemy.dialects': dialects

@@ -4,10 +4,10 @@ from sqlalchemy import Column, func, inspect, types as sa_types
 from clickhouse_sqlalchemy import types, engines, Table
 
 from tests.testcase import BaseTestCase
-from tests.util import require_server_version, with_native_and_http_sessions
+from tests.util import require_server_version, with_native_http_and_chdb_sessions
 
 
-@with_native_and_http_sessions
+@with_native_http_and_chdb_sessions
 class ReflectionTestCase(BaseTestCase):
     def test_server_default(self):
         metadata = self.metadata()

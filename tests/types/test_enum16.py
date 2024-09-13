@@ -5,7 +5,7 @@ from sqlalchemy.sql.ddl import CreateTable
 
 from clickhouse_sqlalchemy import types, engines, Table
 from tests.testcase import BaseTestCase, CompilationTestCase
-from tests.util import with_native_and_http_sessions
+from tests.util import with_native_http_and_chdb_sessions
 
 
 class TestEnum(enum.IntEnum):
@@ -29,7 +29,7 @@ class Enum16CompilationTestCase(CompilationTestCase):
         )
 
 
-@with_native_and_http_sessions
+@with_native_http_and_chdb_sessions
 class Enum8TestCase(BaseTestCase):
     table = Table(
         'test', BaseTestCase.metadata(),

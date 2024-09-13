@@ -7,7 +7,7 @@ from sqlalchemy.orm import Query
 
 from tests.config import database, host, port, http_port, user, password
 from tests.session import http_session, native_session, \
-    system_native_session, http_engine, asynch_session, system_asynch_session
+    system_native_session, http_engine, asynch_session, system_asynch_session, chdb_session
 from tests.util import skip_by_server_version, run_async
 
 
@@ -66,18 +66,26 @@ class BaseAbstractTestCase(object):
 
 class BaseTestCase(BaseAbstractTestCase, TestCase):
     """ Actually tests """
+    system_native_session = system_native_session
+
+    @classmethod
+    def metadata(cls):
+        return MetaData()
 
     @classmethod
     def setUpClass(cls):
         # System database is always present.
-        system_native_session.execute(
+        current_database = cls.system_native_session.execute(text('SELECT currentDatabase()')).fetchone()[0]
+        cls.system_native_session.execute(text('USE default'))
+        cls.system_native_session.execute(
             text('DROP DATABASE IF EXISTS {}'.format(cls.database))
         )
-        system_native_session.execute(
+        cls.system_native_session.execute(
             text('CREATE DATABASE {}'.format(cls.database))
         )
+        cls.system_native_session.execute(text('USE {}'.format(current_database)))
 
-        version = system_native_session.execute(
+        version = cls.system_native_session.execute(
             text('SELECT version()')
         ).fetchall()
         cls.server_version = tuple(int(x) for x in version[0][0].split('.'))
@@ -148,6 +156,12 @@ class AsynchSessionTestCase(BaseAsynchTestCase):
 
     port = port
     session = asynch_session
+
+
+class CHDBSessionTestCase(BaseTestCase):
+    """ Explicitly chDB-protocol-based session Test Case """
+
+    session = chdb_session
 
 
 class CompilationTestCase(BaseTestCase):

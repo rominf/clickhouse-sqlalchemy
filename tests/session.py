@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from clickhouse_sqlalchemy import make_session
 from tests.config import http_uri, native_uri, system_native_uri, asynch_uri, \
-    system_asynch_uri
+    system_asynch_uri, chdb_uri
 
 http_engine = create_engine(http_uri)
 http_session = make_session(http_engine)
@@ -14,6 +14,8 @@ native_engine = create_engine(native_uri)
 native_session = make_session(native_engine)
 asynch_engine = create_async_engine(asynch_uri)
 asynch_session = make_session(asynch_engine, is_async=True)
+chdb_engine = create_engine(chdb_uri)
+chdb_session = make_session(chdb_engine)
 
 system_native_session = make_session(create_engine(system_native_uri))
 system_asynch_session = make_session(

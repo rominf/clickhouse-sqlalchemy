@@ -5,7 +5,7 @@ from functools import wraps
 from parameterized import parameterized_class
 from sqlalchemy.util.concurrency import greenlet_spawn
 
-from tests.session import http_session, native_session
+from tests.session import http_session, native_session, chdb_session
 
 
 def skip_by_server_version(testcase, version_required):
@@ -78,7 +78,12 @@ def mock_object_attr(dialect, attr, new_value):
 
 
 def class_name_func(cls, num, params_dict):
-    suffix = 'HTTP' if params_dict['session'] is http_session else 'Native'
+    if params_dict['session'] is http_session:
+        suffix = 'HTTP'
+    elif params_dict['session'] is chdb_session:
+        suffix = 'CHDB'
+    else:
+        suffix = 'Native'
     return cls.__name__ + suffix
 
 
@@ -102,7 +107,8 @@ def run_async(f):
     return g
 
 
-with_native_and_http_sessions = parameterized_class([
+with_native_http_and_chdb_sessions = parameterized_class([
     {'session': http_session},
-    {'session': native_session}
+    {'session': native_session},
+    {'session': chdb_session, 'system_native_session': chdb_session},
 ], class_name_func=class_name_func)

@@ -1,3 +1,4 @@
+import pytest
 from sqlalchemy import Column, create_engine, inspect, text
 from sqlalchemy.ext.asyncio import create_async_engine
 
@@ -8,12 +9,12 @@ from tests.config import (
     system_http_uri, system_native_uri, system_asynch_uri,
     database as test_database,
 )
-from tests.session import asynch_session
-from tests.util import with_native_and_http_sessions, require_server_version, \
+from tests.session import asynch_session, chdb_session
+from tests.util import with_native_http_and_chdb_sessions, require_server_version, \
     run_async
 
 
-@with_native_and_http_sessions
+@with_native_http_and_chdb_sessions
 class ClickHouseDialectTestCase(BaseTestCase):
 
     @property
@@ -67,6 +68,9 @@ class ClickHouseDialectTestCase(BaseTestCase):
         )
 
     def test_get_table_names(self):
+        if self.session is chdb_session:
+            pytest.skip("chDB do not persist tables created with memory engine across queries, see: "
+                        "https://github.com/chdb-io/chdb/issues/262#issuecomment-2325570573")
         self.table.create(self.session.bind)
         db_tables = self.dialect.get_table_names(self.connection)
         self.assertIn(self.table.name, db_tables)
