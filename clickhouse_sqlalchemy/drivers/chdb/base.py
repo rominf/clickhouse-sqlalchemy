@@ -34,7 +34,7 @@ class ClickHouseDialect_chdb(ClickHouseDialect):
 
     @classmethod
     def get_pool_class(cls, url):
-        return pool.SingletonThreadPool
+        return pool.NullPool
 
     def _get_server_version_info(self, connection):
         return tuple(int(x) for x in self._execute(connection, "SELECT version()", scalar=True).split("."))

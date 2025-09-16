@@ -32,7 +32,7 @@ class Connection(object):
         super(Connection, self).__init__()
 
     def close(self):
-        pass
+        self._connection.close()
 
     def commit(self):
         pass
